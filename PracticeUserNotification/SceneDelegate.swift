@@ -1,10 +1,3 @@
-//
-//  SceneDelegate.swift
-//  PracticeUserNotification
-//
-//  Created by 양호준 on 2022/02/28.
-//
-
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {

@@ -1,10 +1,3 @@
-//
-//  AppDelegate.swift
-//  PracticeUserNotification
-//
-//  Created by 양호준 on 2022/02/28.
-//
-
 import UIKit
 
 @main
@@ -57,6 +50,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             tapbarVC.selectedIndex = 1
             guard let navigationController = tapbarVC.selectedViewController as? UINavigationController else { return }
             navigationController.topViewController?.performSegue(withIdentifier: "yellow", sender: (title, body))
+        } else if response.notification.request.content.userInfo["target_view"] as! String == "brown_view" {
+            tapbarVC.selectedIndex = 2
+            tapbarVC.selectedViewController?.performSegue(withIdentifier: "brown", sender: nil)
         }
     }
     

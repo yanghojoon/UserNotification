@@ -1,10 +1,3 @@
-//
-//  YellowViewController.swift
-//  EnterWithNotifications
-//
-//  Created by 양호준 on 2022/02/28.
-//
-
 import UIKit
 
 class YellowViewController: UIViewController {
