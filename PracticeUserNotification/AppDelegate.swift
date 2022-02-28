@@ -9,11 +9,17 @@ import UIKit
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
-
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool { // 앱이 처음 실행되는 방법은 정말 다양하다. launchOptions에 remoteNotification을 처리할 수 있다.
+        let center = UNUserNotificationCenter.current()
+        center.requestAuthorization(options: [.alert]) { granted, error in
+            print("권한 허용 \(granted)")
+            
+            if let error = error {
+                print(error)
+            }
+        }
+        application.registerForRemoteNotifications() // APNs 사용하기 위해
+        center.delegate = self
         return true
     }
 
@@ -34,3 +40,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+extension AppDelegate: UNUserNotificationCenterDelegate {
+    // 알림을 탭으로 터치했을 때
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        print("did Receive")
+        
+        guard let rootViewController = (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.window?.rootViewController else {
+            return
+        }
+        
+        guard let tapbarVC = rootViewController as? UITabBarController else { return }
+        
+        if response.notification.request.content.userInfo["target_view"] as! String == "yellow_view" {
+            let title = response.notification.request.content.title
+            let body = response.notification.request.content.body
+            tapbarVC.selectedIndex = 1
+            guard let navigationController = tapbarVC.selectedViewController as? UINavigationController else { return }
+            navigationController.topViewController?.performSegue(withIdentifier: "yellow", sender: (title, body))
+        }
+    }
+    
+    // 앱이 foreground에 있을 때 -> 설정을 따로 해주지 않으면 Alert가 따로 뜨진 않는다.
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.banner])
+        print("willPresent")
+    }
+}
